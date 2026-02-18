@@ -3,19 +3,13 @@ name: Deploy Documentation
 on:
   push:
     branches:
-        - main
-        - master
-        - '**'  # Läuft auf allen Branches
+      - main
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
+      - 'requirements.txt'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to deploy from'
-        required: false
-        default: 'main'
 
 permissions:
   contents: write
@@ -26,13 +20,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout private repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          path: private-repo
-          # Bei manuellem Auslösen: verwende den angegebenen Branch, sonst den aktuellen Branch
-          ref: ${{ github.event.inputs.branch || github.ref }}
-          # Vollständiger Git-History für git-revision-date-localized-plugin
           fetch-depth: 0
 
       - name: Setup Python
@@ -41,58 +31,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        working-directory: private-repo
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Build documentation
-        working-directory: private-repo
-        run: |
-          mkdocs build --strict
-
-      - name: Checkout public repository
-        uses: actions/checkout@v4
-        with:
-          repository: ClansCore/clanscore-doc-pub
-          # Für Cross-Repository-Zugriff benötigen wir einen Personal Access Token
-          # GITHUB_TOKEN hat nur Zugriff auf das aktuelle Repository
-          token: ${{ secrets.PUBLIC_REPO_DEPLOY_TOKEN || github.token }}
-          path: public-repo
-
-      - name: Deploy to public repository
-        working-directory: public-repo
-        env:
-          DEPLOY_TOKEN: ${{ secrets.PUBLIC_REPO_DEPLOY_TOKEN }}
-        run: |
-          # Prüfe ob Token vorhanden ist
-          if [ -z "$DEPLOY_TOKEN" ]; then
-            echo "❌ Fehler: PUBLIC_REPO_DEPLOY_TOKEN Secret fehlt!"
-            echo "Bitte erstellen Sie einen Personal Access Token und fügen Sie ihn als Secret hinzu."
-            echo "Siehe: docs/DEPLOYMENT-SETUP.md für Anleitung"
-            exit 1
-          fi
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Konfiguriere Git mit Token für Push
-          git remote set-url origin https://x-access-token:${DEPLOY_TOKEN}@github.com/ClansCore/clanscore-doc-pub.git
-          
-          # Lösche alte mkdocs-Dokumentation (behalte PDFs)
-          find . -maxdepth 1 -type f ! -name '*.pdf' ! -name '.git*' ! -name 'README.md' ! -name '.nojekyll' -delete
-          find . -maxdepth 1 -type d ! -name '.git' ! -name 'resources' ! -name 'protocols' -exec rm -rf {} + || true
-          
-          # Kopiere neue Dokumentation (alle Dateien aus site/)
-          cp -r ../private-repo/site/* .
-          
-          # Erstelle .nojekyll falls nicht vorhanden (für GitHub Pages)
-          touch .nojekyll
-          
-          # Commit und Push
-          git add -A
-          if ! git diff --staged --quiet; then
-            git commit -m "Deploy documentation from private repo [skip ci]"
-            git push origin main || git push origin master || (echo "❌ Push fehlgeschlagen. Prüfen Sie den Token und die Berechtigungen." && exit 1)
-          else
-            echo "No changes to deploy"
-          fi
+      - name: Build and deploy to gh-pages
+        run: mkdocs gh-deploy --force --strict
