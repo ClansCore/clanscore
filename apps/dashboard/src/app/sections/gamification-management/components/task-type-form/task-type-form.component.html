@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <form [formGroup]="taskTypeForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" type="text" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Vergütung</mat-label>
+        <mat-select formControlName="compensation">
+          <mat-option value="Single">Einmalig</mat-option>
+          <mat-option value="Expense">Aufwand</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="form-row">
+      <mat-form-field appearance="fill">
+        <mat-label>Punkte</mat-label>
+        <input matInput formControlName="points" type="number" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Vereins-Kostenanteil</mat-label>
+        <input matInput formControlName="clubCostShare" type="number" />
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onCancel()">Abbrechen</button>
+  <button [disabled]="taskTypeForm.invalid" mat-raised-button (click)="onSubmit()" cdkFocusInitial>{{data.confirmationText}}</button>
+</mat-dialog-actions>

@@ -1,0 +1,24 @@
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // pushes them apart
+  margin-bottom: 1rem;
+}
+
+.header-row h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.mat-column-actions {
+  width: 1%;                /* extremely small */
+  white-space: nowrap;      /* prevents Material from forcing width */
+  padding: 0 !important;    /* remove padding so it really shrinks */
+  text-align: right;        /* optional */
+}

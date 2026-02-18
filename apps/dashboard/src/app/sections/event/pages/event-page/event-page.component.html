@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="header-row">
+    <h1>Events</h1>
+    <!--
+    <button
+      mat-icon-button
+      matTooltip="Event Hinzufügen"
+      (click)="addEvent()"
+    >
+      <mat-icon
+        aria-hidden="false"
+        aria-label="Event Hinzufügen"
+        fontIcon="add"
+      ></mat-icon>
+    </button>
+    -->
+  </div>
+  <section *ngIf="!loading(); else loadingTpl">
+      <app-event-table (updateEvent)="editEvent($event)" (viewEvent)="viewEvent($event)" (deleteEvent)="deleteEvent($event)" [events]="events()"></app-event-table>
+  </section>
+
+  <ng-template #loadingTpl>
+    <p>Loading...</p>
+  </ng-template>
+</div>

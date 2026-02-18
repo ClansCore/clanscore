@@ -1,0 +1,50 @@
+.application-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+
+  mat-form-field {
+    flex: 1 1 250px; // flex-grow, flex-shrink, min-width
+    min-width: 250px; // prevents tiny fields but allows wrapping
+  }
+}
+
+/* Address row layout */
+.address-row {
+  display: flex;
+  gap: 1.5rem;
+
+  .address {
+    flex: 1 1 250px; // flexible but prefers ~50%
+    min-width: 250px;
+  }
+
+  .zip-city-group {
+    display: flex;
+    flex: 1 1 250px; // behaves like right half, also flexible
+    gap: 1.5rem;
+    min-width: 250px;
+
+    .plz,
+    .ort {
+      flex: 1 1 150px;
+      min-width: 120px;
+    }
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+h2 {
+    padding-left: 20px;
+}

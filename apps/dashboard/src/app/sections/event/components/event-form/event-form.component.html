@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-row">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" type="text" placeholder="" />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Ort</mat-label>
+      <input matInput formControlName="location" type="text" placeholder="" />
+    </mat-form-field>
+  </div>
+  <div class="form-row">
+    <!-- HIER DIE DATUMS -->
+    <mat-form-field appearance="fill">
+      <mat-label>Start-Datum</mat-label>
+      <input formControlName="startDate" matInput [matDatepicker]="picker" />
+      <mat-hint>DD.MM.YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Start-Zeit</mat-label>
+      <input matInput formControlName="startTime" type="text" placeholder="HHMM" />
+    </mat-form-field>
+    
+    <mat-form-field appearance="fill">
+      <mat-label>End-Datum</mat-label>
+      <input formControlName="endDate" matInput [matDatepicker]="picker2" />
+      <mat-hint>DD.MM.YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>End-Zeit</mat-label>
+      <input matInput formControlName="endTime" type="text" placeholder="HHMM" />
+    </mat-form-field>
+  </div>
+  <div class="form-row">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Beschreibung</mat-label>
+      <input matInput formControlName="description" type="text" placeholder="" />
+    </mat-form-field>
+  </div>
+</form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onCancel()">Abbrechen</button>
+  <button [disabled]="eventForm.invalid" mat-raised-button (click)="onSubmit()" cdkFocusInitial>{{data.confirmationText}}</button>
+</mat-dialog-actions>

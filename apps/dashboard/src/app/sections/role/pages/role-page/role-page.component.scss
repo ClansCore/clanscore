@@ -1,0 +1,21 @@
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // pushes them apart
+  margin-bottom: 1rem;
+}
+
+.header-row h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.header-row button {
+  margin-left: 1rem; // small spacing from edge
+}

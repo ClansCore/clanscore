@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="header-row">
+    <h1>Rollen</h1>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addRole()"
+    >
+      <mat-icon fontIcon="add"></mat-icon>
+      Hinzufügen
+    </button>
+  </div>
+  <section *ngIf="!loading(); else loadingTpl">
+      <app-role-table (updateRole)="editRole($event)" (deleteRole)="deleteRole($event)" [roles]="roles()"></app-role-table>
+  </section>
+
+  <ng-template #loadingTpl>
+    <p>Loading...</p>
+  </ng-template>
+</div>

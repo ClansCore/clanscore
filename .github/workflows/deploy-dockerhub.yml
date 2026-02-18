@@ -1,0 +1,62 @@
+name: Build and Push Docker Images
+
+# ⚠️ DEAKTIVIERT: Automatisches Build & Push zu Docker Hub ist aktuell nicht aktiv
+# Um zu aktivieren: Entferne die Auskommentierung bei "on:" und entferne "if: false" bei den Jobs
+# on:
+#   push:
+#     branches:
+#       - main
+#       - master
+#   workflow_dispatch:
+
+on:
+  workflow_dispatch:  # Nur manuelles Auslösen möglich (aktuell deaktiviert)
+
+jobs:
+  build-and-push:
+    # ⚠️ DEAKTIVIERT: Setze auf "if: true" um zu aktivieren
+    if: false  # Workflow ist deaktiviert
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/clanscore-api
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clanscore-api:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/clanscore-api:latest
+          cache-to: type=inline
+
+      - name: Build and push Dashboard image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          dockerfile: apps/dashboard/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clanscore-dashboard:latest
+          build-args: |
+            CLANSCORE_API_URL=${{ secrets.CLANSCORE_API_URL }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/clanscore-dashboard:latest
+          cache-to: type=inline
+
+      - name: Build and push Discord Bot image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/discord-bot
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clanscore-discord-bot:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/clanscore-discord-bot:latest
+          cache-to: type=inline

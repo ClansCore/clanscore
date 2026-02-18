@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="header-row">
+      <h1>Gamification - Belohnungen</h1>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="addReward.emit()"
+      >
+        <mat-icon fontIcon="add"></mat-icon>
+        Hinzufügen
+      </button>
+    </div>
+  <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Belohnung </th>
+      <td mat-cell *matCellDef="let reward"> {{reward.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="score">
+      <th mat-header-cell *matHeaderCellDef> Punkte </th>
+      <td mat-cell *matCellDef="let reward"> {{reward.pointCost}} </td>
+    </ng-container>
+    <ng-container matColumnDef="clubCostShare">
+      <th mat-header-cell *matHeaderCellDef> Verein-Kostenanteil (%) </th>
+      <td mat-cell *matCellDef="let reward"> {{reward.clubCostShare}} </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let reward">
+     <a mat-icon-button (click)="editReward.emit(reward)">
+        <mat-icon>edit</mat-icon>
+      </a>
+      <a mat-icon-button (click)="deleteReward.emit(reward)">
+        <mat-icon>delete</mat-icon>
+      </a>
+    </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

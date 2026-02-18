@@ -1,0 +1,113 @@
+name: Deploy to Server (SSH Key Auth)
+
+# ⚠️ DEAKTIVIERT: Automatisches Deployment ist aktuell nicht aktiv
+# Um zu aktivieren: Entferne die Auskommentierung bei "on:" und entferne "if: false" bei den Jobs
+# on:
+#   push:
+#     branches:
+#       - main
+#       - master
+#   workflow_dispatch:  # Manuelles Auslösen
+
+on:
+  workflow_dispatch:  # Nur manuelles Auslösen möglich (aktuell deaktiviert)
+
+jobs:
+  deploy:
+    # ⚠️ DEAKTIVIERT: Setze auf "if: true" um zu aktivieren
+    if: false  # Workflow ist deaktiviert
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create .env file from secrets
+        run: |
+          cat > .env << EOF
+          # MongoDB Konfiguration
+          MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
+          MONGO_DB=${{ secrets.MONGO_DB || 'clanscore' }}
+          
+          # Discord Bot Konfiguration
+          DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+          DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}
+          DISCORD_GUILD_ID=${{ secrets.DISCORD_GUILD_ID }}
+          DISCORD_SERVER_PORT=${{ secrets.DISCORD_SERVER_PORT || '3001' }}
+          
+          # Webhook Konfiguration
+          WEBHOOK_SHARED_SECRET=${{ secrets.WEBHOOK_SHARED_SECRET }}
+          DISCORD_BOT_WEBHOOK_URL=${{ secrets.DISCORD_BOT_WEBHOOK_URL }}
+          
+          # Google Calendar OAuth
+          GOOGLE_CALENDAR_CLIENT_ID=${{ secrets.GOOGLE_CALENDAR_CLIENT_ID }}
+          GOOGLE_CALENDAR_CLIENT_SECRET=${{ secrets.GOOGLE_CALENDAR_CLIENT_SECRET }}
+          GOOGLE_CALENDAR_REDIRECT_URI=${{ secrets.GOOGLE_CALENDAR_REDIRECT_URI }}
+          
+          # API Konfiguration
+          CLANSCORE_API_URL=${{ secrets.CLANSCORE_API_URL }}
+          CLANSCORE_API_KEY=${{ secrets.CLANSCORE_API_KEY }}
+          CLANSCORE_ADMIN_PW=${{ secrets.CLANSCORE_ADMIN_PW }}
+          
+          # Dashboard Konfiguration
+          CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+          
+          # JWT Secret
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          EOF
+
+      - name: Deploy to server via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          password: ${{ secrets.SERVER_SSH_PASSWORD }}
+          port: ${{ secrets.SERVER_SSH_PORT || 22 }}
+          source: "."
+          target: "/home/${{ secrets.SERVER_USER }}/clanscore"
+          strip_components: 0
+          rm: false
+
+      - name: Execute deployment on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          password: ${{ secrets.SERVER_SSH_PASSWORD }}
+          port: ${{ secrets.SERVER_SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /home/${{ secrets.SERVER_USER }}/clanscore || cd ~/clanscore
+            echo "🛑 Stoppe laufende Services..."
+            docker-compose down || true
+            echo "📥 Lade neue Images..."
+            docker-compose pull || true
+            echo "🔨 Baue Images..."
+            docker-compose build --no-cache
+            echo "🚀 Starte Services..."
+            docker-compose up -d
+            echo "📊 Service Status:"
+            docker-compose ps
+            echo "🧹 Räume auf..."
+            docker system prune -f
+
+      - name: Health check
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          password: ${{ secrets.SERVER_SSH_PASSWORD }}
+          port: ${{ secrets.SERVER_SSH_PORT || 22 }}
+          script: |
+            echo "⏳ Warte auf Services..."
+            sleep 30
+            echo "🏥 Prüfe Health Check..."
+            curl -f http://localhost:3000/health || (echo "❌ Health Check fehlgeschlagen!" && exit 1)
+            echo "✅ Deployment erfolgreich!"

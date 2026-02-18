@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "CommonJS",
+        "rootDir": "src",
+        "outDir": "dist",
+        "moduleResolution": "Node",
+        // "removeComments": true,
+        // "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        // "strictNullChecks": true,
+        "skipLibCheck": true,
+        // "types": ["node", "jest"],
+        // "isolatedModules": false
+        "declaration": false,
+        "sourceMap": false
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
+    // "paths": {
+    //     "@models/*": ["models/*"]
+    // }
+}

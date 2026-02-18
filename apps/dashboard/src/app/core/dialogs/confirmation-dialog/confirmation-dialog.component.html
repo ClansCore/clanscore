@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{data}}</h2>
+<mat-dialog-content>
+    Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sich sicher, dass Sie fortfahren wollen?
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onCancel()">Nein</button>
+  <button mat-raised-button (click)="onSubmit()" cdkFocusInitial>Ja</button>
+</mat-dialog-actions>

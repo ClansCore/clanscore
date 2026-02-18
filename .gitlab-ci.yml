@@ -1,0 +1,17 @@
+image: ubuntu:latest
+
+stages:
+    - deploy
+
+pages:
+    stage: deploy
+    script:
+        - apt-get update && apt-get install -y pandoc
+        - mkdir -p public
+        - cp public/style.css public/template.html .
+        - pandoc public/manual.md -s --template=template.html --metadata title="Benutzerhandbuch Discord-Bot Vereine" -o public/index.html
+    artifacts:
+        paths:
+            - public
+    only:
+        - main

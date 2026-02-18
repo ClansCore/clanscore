@@ -1,0 +1,95 @@
+site_name: ClansCore Doku
+site_description: Vollständige Dokumentation für das Clanscore - API, Dashboard und Discord Bot
+site_url: https://clanscore.github.io/clanscore-doc-pub
+repo_name: ClansCore/clanscore
+repo_url: https://github.com/ClansCore/clanscore
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Startseite: index.md
+  - Schnellstart: quickstart.md
+  - Konfiguration:
+    - Einrichtung: configuration/setup.md
+    - Secrets und Umgebungs-Variablen:
+      - GitHub Secrets: configuration/secrets-env/github-secrets.md
+      - Secrets Cheatsheet: configuration/secrets-env/secrets-cheatsheet.md
+      - Umgebungs-Variablen Mapping: configuration/secrets-env/env-mapping.md
+    - SSH Setup: configuration/ssh-setup.md
+    - Entwicklung:
+      - Architektur: configuration/development/architecture.md
+      - API-Endpunkte: configuration/development/api-endpoints.md
+      - Webhooks: configuration/development/webhooks.md
+      - Testing: configuration/development/testing.md
+    - Datenbank:
+      - Backups & Restore: configuration/database/backups-restore.md
+      - Externer Zugriff MongoDB Compass: configuration/database/mongodb.md
+    - Kalender: configuration/calendar/integration.md
+  - Deployment:
+    - Übersicht: deployment/overview.md
+    - Setup: deployment/setup.md
+    - Vollständiger Guide: deployment/guide.md
+    - Details: deployment/details.md
+    - Deployment-Stand: deployment/deployment-stand.md
+    - Server-spezifisch: deployment/quickstart-server.md
+    - Deployment-Skripte: deployment/scripts.md
+  - Entwicklung:
+    - Lokale Entwicklung: development/local.md
+    - Lokales Docker: development/local-docker.md
+    - Troubleshooting: development/troubleshooting.md
+  - Dashboard: dashboard/manual.md
+  - Discord Bot: bot/manual.md
+  - Logging: logging/logging-dokumentation.md
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true

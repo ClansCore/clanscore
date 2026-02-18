@@ -1,0 +1,26 @@
+<div class="admin-container">
+  <div class="header-row">
+    <h1>Benutzer-Verwaltung</h1>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addMember()"
+    >
+      <mat-icon fontIcon="add"></mat-icon>
+      Hinzufügen
+    </button>
+  </div>
+  <section *ngIf="!loading(); else loadingTpl">
+    <app-admin-user-table 
+      [users]="users()" 
+      (setPassword)="setPassword($event)"
+      (updateMember)="editMember($event)"
+      (deleteMember)="deleteMember($event)">
+    </app-admin-user-table>
+  </section>
+
+  <ng-template #loadingTpl>
+    <p>Lade Benutzer...</p>
+  </ng-template>
+</div>
+

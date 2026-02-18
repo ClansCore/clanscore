@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="header-row">
+    <h1>Punktebeispiel pro Jahr (aktives Mitglied)</h1>
+  </div>
+  <table mat-table [dataSource]="rows" class="mat-elevation-z8">
+    <ng-container matColumnDef="quelle">
+      <th mat-header-cell *matHeaderCellDef>Quelle</th>
+      <td mat-cell *matCellDef="let row">{{ row.quelle }}</td>
+      <td mat-footer-cell *matFooterCellDef><strong>Gesamt</strong></td>
+    </ng-container>
+
+    <ng-container matColumnDef="anzahl">
+      <th mat-header-cell *matHeaderCellDef>Anzahl</th>
+      <td mat-cell *matCellDef="let row">
+        <input type="number" min="0" [(ngModel)]="row.anzahl" (ngModelChange)="updatePunkte(row)" />
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <ng-container matColumnDef="punkte">
+      <th mat-header-cell *matHeaderCellDef>Punkte</th>
+      <td mat-cell *matCellDef="let row">{{ row.punkte }}</td>
+      <td mat-footer-cell *matFooterCellDef><strong>{{ totalPunkte }}</strong></td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+  </table>
+</div>

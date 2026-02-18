@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="header-row">
+    <h1>Aufgaben</h1>
+    <!--
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addTask()"
+    >
+      <mat-icon fontIcon="add"></mat-icon>
+      Hinzufügen
+    </button>
+    -->
+  </div>
+  <section *ngIf="!loading(); else loadingTpl">
+      <app-task-table (viewTask)="viewTask($event)" (updateTask)="editTask($event)" (deleteTask)="deleteTask($event)" [tasks]="tasks()"></app-task-table>
+  </section>
+
+  <ng-template #loadingTpl>
+    <p>Loading...</p>
+  </ng-template>
+</div>

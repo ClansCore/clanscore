@@ -1,0 +1,31 @@
+{
+    "name": "clanscore",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "shared"
+    ],
+    "scripts": {
+        "bootstrap": "npm install",
+        
+        "build:shared": "npm -w @clanscore/shared run build",
+        "build:api": "npm -w clanscore-api run build",
+        "build:bot": "npm -w discord-bot run build",
+        "build:dashboard": "npm -w dashboard run build",
+        "build:all": "npm run build:shared && npm run build:api && npm run build:bot && npm run build:dashboard",
+
+        "start:api": "npm -w clanscore-api run start",
+        "start:bot": "npm -w discord-bot run start",
+        "start:dashboard": "npm -w dashboard run start",
+
+        "dev:api": "npm -w clanscore-api run dev",
+        "dev:bot": "npm -w discord-bot run dev",
+        "dev:dashboard": "npm run start:dashboard",
+
+        "docs:build": "mkdocs build --strict",
+        "docs:serve": "mkdocs serve"
+    },
+    "devDependencies": {
+        "typescript": "^5.2.0"
+    }
+}

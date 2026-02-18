@@ -1,0 +1,44 @@
+<div class="container">
+    <section class="column">
+        <div class="header-row">
+        <h1>Rangliste</h1>
+        <mat-form-field appearance="outline" class="leaderboard-selector">
+            <mat-label>Ranglisten</mat-label>
+            <mat-select
+            [value]="selectedLeaderboard()"
+            (selectionChange)="onLeaderboardChange($event.value)"
+            [compareWith]="compareLeaderboards"
+            >
+            <mat-option *ngFor="let lb of leaderboards()" [value]="lb">
+                {{ lb.name }}
+            </mat-option>
+            </mat-select>
+        </mat-form-field>
+        </div>
+        <app-leaderboard-table [leaderboardEntries]="leaderboardEntries()"></app-leaderboard-table>
+    </section>
+    <section class="column">
+        <div class="header-row">
+        <h1>Account-Punkte</h1>
+        <mat-form-field appearance="outline" class="leaderboard-selector">
+            <mat-label>Person</mat-label>
+            <mat-select
+            [value]="selectedUser()"
+            (selectionChange)="onUserChange($event.value)"
+            [compareWith]="compareUsers"
+            >
+            <mat-option *ngFor="let user of users()" [value]="user">
+                {{ user.firstName }} {{ user.lastName }}
+            </mat-option>
+            </mat-select>
+        </mat-form-field>
+        </div>
+        <app-leaderboard-info [ownPoints]="ownPoints()"></app-leaderboard-info>
+        <h1>Punkte-Historie</h1>
+        <app-point-history-table [pointHistory]="pointHistory()"></app-point-history-table>
+        <!--
+        <h1>Belohnungen</h1>
+        <app-reward-table [rewards]="rewards()"></app-reward-table>
+        -->
+    </section>
+</div>

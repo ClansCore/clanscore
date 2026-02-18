@@ -1,0 +1,79 @@
+<h1 class="titel">Gamification - Punktedefinition</h1>
+<form [formGroup]="form" (ngSubmit)="submit()" style="display: flex; align-items: center; gap: 16px; padding-top: 40px; margin-left: 1rem;">
+  <mat-form-field appearance="fill">
+    <mat-label>Punkte/CHF</mat-label>
+    <input matInput formControlName="pointsPerCHF" type="number" required>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Punkte pro 1 CHF Spende</mat-label>
+    <input matInput formControlName="pointsPerDonation" type="number" required>
+  </mat-form-field>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    Update
+  </button>
+</form>
+<div style="margin-top: 40px; margin-left: 1rem; margin-right: 1rem;">
+  <h1>Übersicht</h1>
+  <table mat-table [dataSource]="overviewData" class="mat-elevation-z8" *ngIf="gamificationParameter">
+    <ng-container matColumnDef="bezeichnung">
+      <th mat-header-cell *matHeaderCellDef>Bezeichnung</th>
+      <td mat-cell *matCellDef="let row">{{ row.bezeichnung }}</td>
+    </ng-container>
+    <ng-container matColumnDef="punkteProChf">
+      <th mat-header-cell *matHeaderCellDef>Punkte / 1 CHF</th>
+      <td mat-cell *matCellDef="let row">{{ row.punkteProChf != null ? (row.punkteProChf | number : '1.2-2') : '-' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="chfPerPunkt">
+      <th mat-header-cell *matHeaderCellDef>CHF / 1 Punkt</th>
+      <td mat-cell *matCellDef="let row">{{ row.chfPerPunkt != null ? (row.chfPerPunkt | number : '1.2-2') : '-' }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="overviewColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: overviewColumns;"></tr>
+  </table>
+</div>
+
+<div style="margin-top: 40px; margin-left: 1rem; margin-right: 1rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Aufwandsentschädigungen</h1>
+    <button mat-raised-button color="primary" (click)="addTasktype.emit()">
+      <mat-icon>add</mat-icon>
+      Hinzufügen
+    </button>
+  </div>
+  <table mat-table [dataSource]="annualPlans" class="mat-elevation-z8">
+    <ng-container matColumnDef="bezeichnung">
+      <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+      <td mat-cell *matCellDef="let plan"> {{ plan.taskType.name }} </td>
+    </ng-container>
+    <ng-container matColumnDef="punkte">
+      <th mat-header-cell *matHeaderCellDef> Punkte </th>
+      <td mat-cell *matCellDef="let plan"> {{ plan.taskType.points }} </td>
+    </ng-container>
+    <ng-container matColumnDef="chfOhneKostenanteil">
+      <th mat-header-cell *matHeaderCellDef> Kosten für Verein </th>
+      <td mat-cell *matCellDef="let plan"> {{ getChfPerPunkt(plan) | number:'1.2-2' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="kostenanteil">
+      <th mat-header-cell *matHeaderCellDef>Vereinskostenanteil</th>
+      <td mat-cell *matCellDef="let plan"> {{ plan.taskType.clubCostShare | number:'1.0-0' }} % </td>
+    </ng-container>
+    <ng-container matColumnDef="chfMitKostenanteil">
+      <th mat-header-cell *matHeaderCellDef>Kosten mit Vereinskostenanteil </th>
+      <td mat-cell *matCellDef="let plan"> {{ getChfWithCostShare(plan) | number:'1.2-2' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let plan">
+     <a mat-icon-button (click)="editTasktype.emit(plan.taskType)">
+        <mat-icon>edit</mat-icon>
+      </a>
+      <a mat-icon-button (click)="deleteTasktype.emit(plan.taskType)">
+        <mat-icon>delete</mat-icon>
+      </a>
+    </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

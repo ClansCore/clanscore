@@ -1,0 +1,30 @@
+<table mat-table [dataSource]="dataSource()" class="mat-elevation-z8">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let event"> {{event.name}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Beschreibung </th>
+    <td mat-cell *matCellDef="let event"> {{event.description}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let event">
+      <a mat-icon-button (click)="viewEvent.emit(event)">
+        <mat-icon>visibility</mat-icon>
+      </a>
+    <!--
+     <a mat-icon-button (click)="updateEvent.emit(event)">
+        <mat-icon>edit</mat-icon>
+      </a>
+      <a mat-icon-button (click)="deleteEvent.emit(event)">
+        <mat-icon>delete</mat-icon>
+      </a>
+      -->
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

@@ -1,0 +1,32 @@
+
+<mat-tab-group>
+  <mat-tab label="Punkte">
+      <app-point-definition 
+      [gamificationParameter]="gamificationparameter()" 
+      [annualPlans]="annualPlans()" 
+      (updateGamificationParameter)="updateGamificationParameter($event)" 
+      (editTasktype)="editTasktype($event)" 
+      (deleteTasktype)="deleteTasktype($event)"
+      (addTasktype)="addTasktype()">
+    </app-point-definition>
+  </mat-tab>
+  <mat-tab label="Jahresplanung">
+    <app-jahresplanung-table [annualPlans]="annualPlans()" [gamificationParameter]="gamificationparameter()"></app-jahresplanung-table>
+  </mat-tab>
+  <mat-tab label="Belohnungen">
+    <app-reward-table 
+    (editReward)="editReward($event)"
+    (addReward)="addReward()"
+    (deleteReward)="deleteReward($event)"
+    [rewards]="rewards()"
+    >
+  </app-reward-table>
+  </mat-tab>
+  <mat-tab label="Punktebeispiel">
+    <app-points-example-table 
+      [taskTypes]="taskTypes" 
+      [spendenTask]="spendenTask"
+      [gamificationParameter]="gamificationparameter()">
+    </app-points-example-table>
+  </mat-tab>
+</mat-tab-group>

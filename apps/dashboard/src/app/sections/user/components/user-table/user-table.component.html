@@ -1,0 +1,35 @@
+<table mat-table [dataSource]="dataSource()" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="firstName">
+    <th mat-header-cell *matHeaderCellDef> Vorname </th>
+    <td mat-cell *matCellDef="let user"> {{user.firstName}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="lastName">
+    <th mat-header-cell *matHeaderCellDef> Nachname </th>
+    <td mat-cell *matCellDef="let user"> {{user.lastName}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nickname">
+    <th mat-header-cell *matHeaderCellDef> Benutzername </th>
+    <td mat-cell *matCellDef="let user"> {{user.nickname}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="birthdate">
+    <th mat-header-cell *matHeaderCellDef> Geburtsdatum </th>
+    <td mat-cell *matCellDef="let user"> {{user.birthdate | date: 'dd.MM.yyyy'}} </td>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let user">
+      <a mat-icon-button (click)="updateMember.emit(user)">
+        <mat-icon>edit</mat-icon>
+      </a>
+      <a mat-icon-button (click)="deleteMember.emit(user)">
+        <mat-icon>delete</mat-icon>
+      </a>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

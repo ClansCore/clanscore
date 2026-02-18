@@ -1,0 +1,25 @@
+.task-type-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  mat-form-field {
+    flex: 1 1 250px; // flex-grow, flex-shrink, min-width
+    min-width: 250px;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+h2 {
+  padding-left: 20px;
+}

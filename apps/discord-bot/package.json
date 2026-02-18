@@ -1,0 +1,30 @@
+{
+    "name": "discord-bot",
+    "version": "0.1.0",
+    "private": false,
+    "type": "module",
+    "main": "dist/index.cjs",
+    "scripts": {
+        "build": "tsup src/index.ts --dts --format cjs --out-dir dist",
+        "deploy:commands": "tsx src/deploy.commands.ts",
+        "start": "npm run build && npm run deploy:commands && node dist/index.cjs",
+        "dev": "npm run deploy:commands && tsx watch src/index.ts",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@clanscore/shared": "0.1.0",
+        "discord.js": "^14.11.0",
+        "dotenv": "^16.6.1",
+        "express": "^5.2.1",
+        "rrule": "^2.8.1",
+        "zod": "^4.1.13"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "jest": "^29.0.0",
+        "ts-jest": "^29.4.6",
+        "tsup": "^8.5.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.2.0"
+    }
+}

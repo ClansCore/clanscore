@@ -1,0 +1,40 @@
+{
+    "name": "@clanscore/shared",
+    "version": "0.1.0",
+    "private": false,
+    "type": "commonjs",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./dto/*": {
+            "types": "./dist/dto/*.d.ts",
+            "default": "./dist/dto/*.js"
+        },
+        "./errors/*": {
+            "types": "./dist/errors/*.d.ts",
+            "default": "./dist/errors/*.js"
+        },
+        "./utils/*": {
+            "types": "./dist/utils/*.d.ts",
+            "default": "./dist/utils/*.js"
+        }
+    },
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "npm run clean && tsc -p tsconfig.json"
+    },
+    "files": [
+        "dist"
+    ],
+    "dependencies": {
+        "date-fns": "^4.1.0"
+    },
+    "devDependencies": {
+        "rimraf": "^6.0.1",
+        "typescript": "^5.2.0"
+    }
+}

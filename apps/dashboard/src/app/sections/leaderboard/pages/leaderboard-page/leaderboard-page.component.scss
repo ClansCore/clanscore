@@ -1,0 +1,29 @@
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.column {
+  width: calc(50% - 1rem);
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h1 {
+    margin: 0;
+  }
+
+  .leaderboard-selector {
+    width: 200px;
+  }
+}

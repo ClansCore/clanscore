@@ -1,0 +1,58 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.env
+.env.local
+*.log
+.DS_Store
+.vscode
+.idea
+.cursor
+.github
+
+# App build artifacts
+apps/*/dist
+apps/*/node_modules
+shared/dist
+shared/node_modules
+
+# Backup folder and data
+backup/
+data/
+*.tar.gz
+*.tar.gz.gpg
+*.gpg
+
+# Documentation
+docs/
+mkdocs.yml
+requirements.txt
+
+# Test files
+**/tests/
+**/*.test.ts
+**/*.spec.ts
+jest.config.*
+coverage/
+.nyc_output/
+
+# Deployment scripts (not needed in container)
+*.ps1
+*.sh
+deploy.*
+setup-*
+DEPLOYMENT.md
+*-GUIDE.md
+*-SETUP.md
+*-CHEATSHEET.md
+
+# Temp files
+*.swp
+Thumbs.db
+*.tmp
+*.temp
+
+# Angular cache
+.angular/

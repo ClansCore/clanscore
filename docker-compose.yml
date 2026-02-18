@@ -1,0 +1,125 @@
+services:
+  # MongoDB Datenbank
+  mongodb:
+    image: mongo:8
+    container_name: clanscore-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - clanscore-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok || exit(1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # ClansCore API
+  clanscore-api:
+    build:
+      context: .
+      dockerfile: apps/clanscore-api/Dockerfile
+    container_name: clanscore-api
+    restart: unless-stopped
+    # Port 3000 nur intern verfügbar (nicht von aussen erreichbar)
+    # API ist über Nginx Proxy auf Port 80 erreichbar: /api
+    ports:
+      - "127.0.0.1:3000:3000"  # Nur localhost, nicht von aussen
+    environment:
+      - NODE_ENV=production
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=${MONGO_DB:-clanscore}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+      - DISCORD_SERVER_PORT=${DISCORD_SERVER_PORT:-3001}
+      - DISCORD_BOT_WEBHOOK_URL=${DISCORD_BOT_WEBHOOK_URL:-http://discord-bot:3001}
+      - WEBHOOK_SHARED_SECRET=${WEBHOOK_SHARED_SECRET}
+      - GOOGLE_CALENDAR_CLIENT_ID=${GOOGLE_CALENDAR_CLIENT_ID:-}
+      - GOOGLE_CALENDAR_CLIENT_SECRET=${GOOGLE_CALENDAR_CLIENT_SECRET:-}
+      - GOOGLE_CALENDAR_REDIRECT_URI=${GOOGLE_CALENDAR_REDIRECT_URI:-}
+      - CLANSCORE_ADMIN_PW=${CLANSCORE_ADMIN_PW}
+      - CLANSCORE_API_KEY=${CLANSCORE_API_KEY}
+      - CLANSCORE_API_URL=${CLANSCORE_API_URL:-http://clanscore-api:3000/api}
+      - JWT_SECRET=${JWT_SECRET}
+      # CORS: Erlaubt Zugriff vom Dashboard (Port 80) und lokale Entwicklung
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost,http://localhost:4200,http://152.96.10.11,http://srbsci-11.ost.ch}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - clanscore-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Discord Bot
+  discord-bot:
+    build:
+      context: .
+      dockerfile: apps/discord-bot/Dockerfile
+    container_name: clanscore-discord-bot
+    restart: unless-stopped
+    ports:
+      - "${DISCORD_SERVER_PORT:-3001}:${DISCORD_SERVER_PORT:-3001}"
+    environment:
+      - NODE_ENV=production
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+      - DISCORD_SERVER_PORT=${DISCORD_SERVER_PORT:-3001}
+      - WEBHOOK_SHARED_SECRET=${WEBHOOK_SHARED_SECRET}
+      - GOOGLE_CALENDAR_CLIENT_ID=${GOOGLE_CALENDAR_CLIENT_ID:-}
+      - GOOGLE_CALENDAR_CLIENT_SECRET=${GOOGLE_CALENDAR_CLIENT_SECRET:-}
+      - GOOGLE_CALENDAR_REDIRECT_URI=${GOOGLE_CALENDAR_REDIRECT_URI:-}
+      - CLANSCORE_API_URL=http://clanscore-api:3000/api
+      - CLANSCORE_API_KEY=${CLANSCORE_API_KEY}
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=${MONGO_DB:-clanscore}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    depends_on:
+      - clanscore-api
+      - mongodb
+    networks:
+      - clanscore-network
+
+  # Angular Dashboard
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+      args:
+        # API URL - wird automatisch zu relativem Pfad konvertiert (z.B. /api aus http://clanscore-api:3000/api)
+        - CLANSCORE_API_URL=${CLANSCORE_API_URL:-http://clanscore-api:3000/api}
+    container_name: clanscore-dashboard
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - clanscore-api
+    networks:
+      - clanscore-network
+    # Optional: Volume für nginx config updates
+    # volumes:
+    #   - ./apps/dashboard/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  clanscore-network:
+    driver: bridge

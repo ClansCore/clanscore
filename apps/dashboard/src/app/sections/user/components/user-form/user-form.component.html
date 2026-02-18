@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-row">
+    <mat-form-field appearance="fill">
+      <mat-label>Vorname</mat-label>
+      <input matInput formControlName="firstName" type="text" placeholder="Max" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="lastName" type="text" placeholder="Mustermann" />
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="fill">
+      <mat-label>Benutzername</mat-label>
+      <input matInput formControlName="nickname" type="text" placeholder="MaxMustermann99" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Geburtsdatum</mat-label>
+      <input formControlName="birthdate" matInput [matDatepicker]="picker" />
+      <mat-hint>DD.MM.YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row address-row">
+    <mat-form-field appearance="fill" class="address">
+      <mat-label>Adresse</mat-label>
+      <input matInput formControlName="address" type="text" placeholder="Musterstrasse 1" />
+    </mat-form-field>
+
+    <div class="zip-city-group">
+      <mat-form-field appearance="fill" class="plz">
+        <mat-label>PLZ</mat-label>
+        <input matInput formControlName="zip" type="number" placeholder="XXXX" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="ort">
+        <mat-label>Ort</mat-label>
+        <input matInput formControlName="city" type="text" placeholder="Musterhausen" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field class="address" appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="you@example.com" />
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>Rollen</mat-label>
+      <mat-select formControlName="roles"  multiple>
+        @for (role of roles(); track role) {
+          <mat-option [value]="role.id">{{role.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+<!--
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Telefon</mat-label>
+        <input matInput formControlName="telephone" type="text" placeholder="XXXXXXXXXX" />
+    </mat-form-field>
+-->
+</form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onCancel()">Abbrechen</button>
+  <button [disabled]="userForm.invalid" mat-raised-button (click)="onSubmit()">{{data.confirmationText}}</button>
+</mat-dialog-actions>

@@ -1,0 +1,15 @@
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.column {
+  width: calc(50% - 1rem);
+  text-align: left;
+  box-sizing: border-box;
+}

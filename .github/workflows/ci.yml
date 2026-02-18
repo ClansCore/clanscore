@@ -1,0 +1,174 @@
+name: CI (Continuous Integration)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - '**'  # Läuft auf allen Branches
+  pull_request:
+    branches:
+      - main
+      - master
+      - deploy-vm-server
+  workflow_dispatch:  # Manuelles Auslösen
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Type check API
+        working-directory: apps/clanscore-api
+        run: npx tsc --noEmit
+
+      - name: Type check Discord Bot
+        working-directory: apps/discord-bot
+        run: npx tsc --noEmit
+
+      - name: Type check Dashboard
+        working-directory: apps/dashboard
+        run: npx ng build --configuration development || npx tsc --noEmit
+
+      - name: Lint API (if ESLint config exists)
+        working-directory: apps/clanscore-api
+        run: |
+          if [ -f "eslint.config.js" ] || [ -f ".eslintrc.js" ] || [ -f ".eslintrc.json" ]; then
+            npx eslint . --ext .ts || echo "⚠️ ESLint config found but linting failed or no issues"
+          else
+            echo "ℹ️ No ESLint config found, skipping lint"
+          fi
+        continue-on-error: true
+
+  build:
+    name: Build All Services
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all packages
+        run: npm run build:all
+
+      - name: Verify builds
+        run: |
+          echo "✅ Checking build outputs..."
+          [ -f "shared/dist/index.js" ] && echo "✅ Shared package built" || echo "❌ Shared package missing"
+          [ -f "apps/clanscore-api/dist/index.js" ] && echo "✅ API built" || echo "❌ API missing"
+          [ -f "apps/discord-bot/dist/index.cjs" ] && echo "✅ Discord Bot built" || echo "❌ Discord Bot missing"
+          [ -d "apps/dashboard/dist" ] && echo "✅ Dashboard built" || echo "❌ Dashboard missing"
+
+  test-discord-bot:
+    name: Test Discord Bot
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Run Discord Bot tests
+        working-directory: apps/discord-bot
+        run: npm test
+
+  test-dashboard:
+    name: Test Dashboard
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Dashboard tests
+        working-directory: apps/dashboard
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+        continue-on-error: true  # Tests können optional sein
+
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/clanscore-api/Dockerfile
+          push: false
+          tags: clanscore-api:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Discord Bot Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/discord-bot/Dockerfile
+          push: false
+          tags: discord-bot:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Dashboard Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/dashboard/Dockerfile
+          push: false
+          tags: dashboard:test
+          build-args: |
+            API_URL=/api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

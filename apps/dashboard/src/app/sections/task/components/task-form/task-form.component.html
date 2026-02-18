@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-row">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Aufgabenname</mat-label>
+      <input matInput formControlName="name" type="text" placeholder="" [readonly]="isViewMode" />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Datum</mat-label>
+      <input formControlName="deadline" matInput [matDatepicker]="picker" [readonly]="isViewMode" />
+      <mat-hint>DD.MM.YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker" [disabled]="isViewMode"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="fill">
+      <mat-label>Beschreibung</mat-label>
+      <input matInput formControlName="description" type="text" placeholder="" [readonly]="isViewMode" />
+    </mat-form-field>
+
+    
+  </div>
+  <div class="form-row">
+    <mat-form-field class="address" appearance="fill">
+      <mat-label>Punkte</mat-label>
+      <input matInput formControlName="points" type="number" placeholder="" [readonly]="isViewMode" />
+    </mat-form-field>
+    <mat-form-field class="address" appearance="fill">
+      <mat-label>Maximale Anzahl an Teilnehmern</mat-label>
+      <input matInput formControlName="maxParticipants" type="number" placeholder="" [readonly]="isViewMode" />
+    </mat-form-field>
+  </div>
+  <div class="form-row">
+    <mat-form-field >
+        <mat-label>Aufgabentyp</mat-label>
+        <mat-select formControlName="taskType" [disabled]="isViewMode">
+          <mat-option value="">Keine Auswahl</mat-option>
+          @for (taskType of taskTypes(); track taskType) {
+            <mat-option [value]="taskType.id">{{taskType.name}}</mat-option>
+          }
+        </mat-select>
+    </mat-form-field>
+  </div>
+</form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onCancel()">Abbrechen</button>
+  <button [disabled]="taskForm.invalid" mat-raised-button (click)="onSubmit()" cdkFocusInitial>{{data.confirmationText}}</button>
+</mat-dialog-actions>
